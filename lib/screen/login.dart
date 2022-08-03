@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:simple_login/screen/profile.dart';
 import 'package:simple_login/screen/registration.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -80,7 +81,9 @@ class LoginScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen()))
+              },
               child: Ink(
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(

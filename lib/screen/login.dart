@@ -82,7 +82,8 @@ class LoginScreen extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen()))
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfileScreen()));
               },
               child: Ink(
                 padding: EdgeInsets.all(15),

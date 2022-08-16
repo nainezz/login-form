@@ -6,6 +6,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:simple_login/screen/profile.dart';
 import 'package:simple_login/screen/registration.dart';
 
+import 'home.dart';
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -82,8 +84,11 @@ class LoginScreen extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfileScreen()));
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  (_) => false,
+                );
               },
               child: Ink(
                 padding: EdgeInsets.all(15),

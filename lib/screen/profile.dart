@@ -5,6 +5,8 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 
+import 'data.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -58,7 +60,10 @@ class ProfileScreen extends StatelessWidget {
             thickness: 1,
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => PersonalData()));
+            },
             leading: Container(
               padding: EdgeInsets.all(10),
               width: 42,

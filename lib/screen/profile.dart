@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:simple_login/screen/home.dart';
+import 'package:simple_login/screen/test.dart';
 
 import 'data.dart';
 
@@ -61,8 +63,8 @@ class ProfileScreen extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => PersonalData()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => TestPage()));
             },
             leading: Container(
               padding: EdgeInsets.all(10),

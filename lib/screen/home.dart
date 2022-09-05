@@ -1,21 +1,58 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, dead_code
+
+import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:http/http.dart' as http;
+import 'package:simple_login/screen/profile.dart';
+
+import '../widgets/product.dart';
+import 'category.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
   final List<String> images = [
-    'https://media1.popsugar-assets.com/files/thumbor/r-H2D7LclaSMDAoEV9iBbODdRJs/fit-in/728xorig/filters:format_auto-!!-:strip_icc-!!-/2022/07/27/995/n/1922729/8d82874962e1c1ce7992d1.75767700_/i/best-nike-training-shoes.jpg',
-    'https://media.wired.com/photos/5c3d3d3edd72b32c56117f5c/1:1/w_1602,h_1602,c_limit/nike-extended.gif',
-    'https://static01.nyt.com/images/2022/03/17/us/08xpsatan-shoe/merlin_186039729_cdb846bf-dc3f-49cf-8552-e3992140338b-superJumbo.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSek_I3vv8kiCevm833ox1o8vDZpKrBilV2kg&usqp=CAU',
+    //'https://media.wired.com/photos/5c3d3d3edd72b32c56117f5c/1:1/w_1602,h_1602,c_limit/nike-extended.gif',
+    //'https://static01.nyt.com/images/2022/03/17/us/08xpsatan-shoe/merlin_186039729_cdb846bf-dc3f-49cf-8552-e3992140338b-superJumbo.jpg',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSek_I3vv8kiCevm833ox1o8vDZpKrBilV2kg&usqp=CAU',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSek_I3vv8kiCevm833ox1o8vDZpKrBilV2kg&usqp=CAU',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSek_I3vv8kiCevm833ox1o8vDZpKrBilV2kg&usqp=CAU',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSek_I3vv8kiCevm833ox1o8vDZpKrBilV2kg&usqp=CAU',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSek_I3vv8kiCevm833ox1o8vDZpKrBilV2kg&usqp=CAU',
+    // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSek_I3vv8kiCevm833ox1o8vDZpKrBilV2kg&usqp=CAU',
     // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4nQ7v4v1Y_Z2MLNHsY6bvbBERB_0yNOHbSw&usqp=CAU'
   ];
+
+  Future<List> getCategories() async {
+    var response = await http.get(
+      Uri.parse('https://fakestoreapi.com/products/categories'),
+    );
+
+    final List data = jsonDecode(response.body);
+
+    return data;
+  }
+
+  Future<List> getproduct() async {
+    var response =
+        await http.get(Uri.parse('https://fakestoreapi.com/products?limit=5'));
+    final List data = jsonDecode(response.body);
+    return data;
+  }
+
+  Future<List> getspecific() async {
+    var response = await http.get(
+        Uri.parse('https://fakestoreapi.com/products/category/electronics'));
+    final List data = jsonDecode(response.body);
+
+    return data;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +67,20 @@ class HomeScreen extends StatelessWidget {
               //appbar
               Row(
                 children: [
-                  CircleAvatar(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.network(
-                        'https://avatars.githubusercontent.com/u/59535592?v=4',
+                  InkResponse(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(),
+                          ));
+                    },
+                    child: CircleAvatar(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.network(
+                          'https://avatars.githubusercontent.com/u/59535592?v=4',
+                        ),
                       ),
                     ),
                   ),
@@ -98,33 +144,56 @@ class HomeScreen extends StatelessWidget {
                 margin: EdgeInsets.symmetric(vertical: 10),
                 width: double.infinity,
                 height: 64,
-                child: ListView.builder(
-                  itemCount: 5,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: ((context, index) => Container(
-                        margin: EdgeInsets.only(left: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8)),
-                        width: 100,
-                        height: 100,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(children: [
-                            Icon(Icons.image),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Expanded(
-                                child: Text(
-                              'setting ',
-                              overflow: TextOverflow.ellipsis,
+                child: FutureBuilder<List>(
+                    future: getCategories(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error.toString()));
+                      }
+
+                      var data = snapshot.data ?? [];
+
+                      return ListView.builder(
+                        itemCount: data.length,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: ((context, index) => GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: ((context) => CategoryScreen(
+                                              title: data[index],
+                                            ))));
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(left: 10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8)),
+                                width: 100,
+                                height: 100,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(children: [
+                                    Icon(Icons.image),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Expanded(
+                                        child: Text(
+                                      '${data[index]} ',
+                                      overflow: TextOverflow.ellipsis,
+                                    )),
+                                  ]),
+                                ),
+                              ),
                             )),
-                          ]),
-                        ),
-                      )),
-                ),
+                      );
+                    }),
               ),
               //latest products
               Container(
@@ -135,7 +204,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Super hot promo',
+                      'Electronics',
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 24,
@@ -143,35 +212,73 @@ class HomeScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: 5,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: ((context, index) => Container(
-                              margin: EdgeInsets.only(left: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8)),
-                              width: 180,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(children: [
-                                  Image.network(images.first),
-                                  SizedBox(height: 5),
-                                  Expanded(
-                                    child: Text(
-                                      'SmartWatch ',
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                      child: FutureBuilder<List>(
+                          future: getspecific(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                              if (snapshot.hasError) {
+                                return Center(
+                                  child: Text(
+                                    snapshot.error.toString(),
                                   ),
-                                  Expanded(
-                                      child: RichText(
-                                    text: TextSpan(text: '\$999'),
-                                  ))
-                                ]),
-                              ),
-                            )),
-                      ),
+                                );
+                              }
+                            }
+                            var data = snapshot.data ?? [];
+                            return ListView.builder(
+                              itemCount: data.length,
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: ((context, index) =>
+                                  ProductCard(product: data[index])),
+                            );
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                width: double.infinity,
+                height: 250,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      ' Latest Super hot promo',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: FutureBuilder<List>(
+                          future: getproduct(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                  snapshot.error.toString(),
+                                ),
+                              );
+                            }
+                            var data = snapshot.data ?? [];
+                            return ListView.builder(
+                                itemCount: data.length,
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: ((context, index) =>
+                                    ProductCard(product: data[index])));
+                          }),
                     ),
                   ],
                 ),

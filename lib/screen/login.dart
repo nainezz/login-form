@@ -5,7 +5,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:simple_login/screen/profile.dart';
 import 'package:simple_login/screen/registration.dart';
-import 'package:simple_login/screen/test.dart';
+import 'package:simple_login/screen/home.dart';
 
 import 'home.dart';
 
@@ -159,7 +159,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TestPage()));
+                      MaterialPageRoute(builder: (context) => HomeScreen()));
                 },
               ),
             ],

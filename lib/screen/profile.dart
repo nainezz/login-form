@@ -5,7 +5,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:simple_login/screen/home.dart';
-import 'package:simple_login/screen/test.dart';
+import 'package:simple_login/screen/home.dart';
 
 import 'data.dart';
 
@@ -16,8 +16,8 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text('Profile '),
         elevation: 0,
-        backgroundColor: Colors.transparent,
       ),
       body: ListView(
         children: [
@@ -63,8 +63,8 @@ class ProfileScreen extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => TestPage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()));
             },
             leading: Container(
               padding: EdgeInsets.all(10),

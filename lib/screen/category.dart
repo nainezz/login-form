@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:simple_login/model/product.dart';
 import 'package:simple_login/widgets/product.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,12 +11,12 @@ class CategoryScreen extends StatelessWidget {
   final String title;
   const CategoryScreen({super.key, required this.title});
 
-  Future<List> getProducts() async {
+  Future<List<ProductModel>> getProducts() async {
     var response = await http
         .get(Uri.parse('https://fakestoreapi.com/products/category/$title'));
 
     final List data = jsonDecode(response.body);
-    return data;
+    return data.map((e) => ProductModel.fromJson(e)).toList();
   }
 
   @override
@@ -26,7 +27,7 @@ class CategoryScreen extends StatelessWidget {
           title.toUpperCase(),
         ),
       ),
-      body: FutureBuilder<List>(
+      body: FutureBuilder<List<ProductModel>>(
         future: getProducts(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -35,7 +36,10 @@ class CategoryScreen extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           }
-          final List data = snapshot.data ?? [];
+          if (!snapshot.hasData) {
+            return Center(child: Text('product not found'));
+          }
+          final data = snapshot.data!;
           return GridView.builder(
             padding: const EdgeInsets.all(10),
             itemCount: data.length,

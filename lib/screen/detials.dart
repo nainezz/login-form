@@ -4,25 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
+import 'package:simple_login/model/product.dart';
 
 class ProductScreen extends StatelessWidget {
-  final dynamic product;
+  final ProductModel product;
   const ProductScreen({Key? key, required this.product}) : super(key: key);
-  Future getProduct() async {
+  Future<ProductModel> getProduct() async {
     var response = await http
-        .get(Uri.parse('https://fakestoreapi.com/products/${product["id"]}'));
+        .get(Uri.parse('https://fakestoreapi.com/products/${product.id}'));
 
     final data = jsonDecode(response.body);
-    return data;
+    return ProductModel.fromJson(data);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(product['title']),
+        title: Text(product.title),
       ),
-      body: FutureBuilder<dynamic>(
+      body: FutureBuilder<ProductModel>(
         future: getProduct(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -31,12 +32,15 @@ class ProductScreen extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           }
-          final data = snapshot.data ?? {};
+          if (!snapshot.hasData) {
+            return Center(child: Text('product not found'));
+          }
+          final data = snapshot.data!;
           return Column(
             children: [
               Expanded(
                 child: Image(
-                  image: NetworkImage(data["image"]),
+                  image: NetworkImage(data.image),
                 ),
               ),
               Padding(
@@ -47,14 +51,14 @@ class ProductScreen extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        data["title"],
+                        data.title,
                         style: const TextStyle(fontSize: 24),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                         child: Text(
-                      '\$ ${data["price"]}',
+                      '\$ ${data.price}',
                       textAlign: TextAlign.end,
                       style: const TextStyle(fontSize: 24),
                     ))
@@ -65,7 +69,7 @@ class ProductScreen extends StatelessWidget {
               Expanded(
                   child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(data["description"]),
+                child: Text(data.description),
               ))
             ],
           );

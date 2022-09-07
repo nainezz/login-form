@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:simple_login/model/product.dart';
 
 import '../screen/detials.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,7 @@ class ProductCard extends StatelessWidget {
     required this.product,
   }) : super(key: key);
 
-  final dynamic product;
+  final ProductModel product;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class ProductCard extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  child: Image.network(product['image']),
+                  child: Image.network(product.image),
                 ),
                 Expanded(
                   child: Container(
@@ -43,14 +44,14 @@ class ProductCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            '${product["title"]}  ',
+                            '${product.title}  ',
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Expanded(
                           child: Text(
-                            '${product["description"]}   ',
+                            '${product.description}   ',
                             style: TextStyle(color: Colors.grey),
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
@@ -73,7 +74,7 @@ class ProductCard extends StatelessWidget {
                             ),
                             RichText(
                               text: TextSpan(
-                                text: '\$ ${product["price"]}',
+                                text: '\$ ${product.price}',
                                 style: TextStyle(color: Colors.blue),
                               ),
                             ),

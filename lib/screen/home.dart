@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
+import 'package:simple_login/model/category.dart';
+import 'package:simple_login/model/product.dart';
 import 'package:simple_login/screen/profile.dart';
 
 import '../widgets/product.dart';
@@ -29,29 +31,36 @@ class HomeScreen extends StatelessWidget {
     // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4nQ7v4v1Y_Z2MLNHsY6bvbBERB_0yNOHbSw&usqp=CAU'
   ];
 
-  Future<List> getCategories() async {
+  Future<List<ProductModel>> getProducts() async {
+    var users = <ProductModel>[];
     var response = await http.get(
-      Uri.parse('https://fakestoreapi.com/products/categories'),
+      Uri.parse('https://fakestoreapi.com/products?limit=5'),
     );
 
     final List data = jsonDecode(response.body);
-
-    return data;
+    for (var user in data) {
+      users.add(ProductModel.fromJson(user));
+    }
+    return users;
   }
 
-  Future<List> getproduct() async {
-    var response =
-        await http.get(Uri.parse('https://fakestoreapi.com/products?limit=5'));
+  Future<List> getCategories() async {
+    var response = await http
+        .get(Uri.parse('https://fakestoreapi.com/products/categories'));
     final List data = jsonDecode(response.body);
+
     return data;
   }
 
-  Future<List> getspecific() async {
+  Future<List<ProductModel>> getspecific() async {
+    var specifics = <ProductModel>[];
     var response = await http.get(
         Uri.parse('https://fakestoreapi.com/products/category/electronics'));
     final List data = jsonDecode(response.body);
-
-    return data;
+    for (var specific in data) {
+      specifics.add(ProductModel.fromJson(specific));
+    }
+    return specifics;
   }
 
   @override
@@ -153,8 +162,11 @@ class HomeScreen extends StatelessWidget {
                       if (snapshot.hasError) {
                         return Center(child: Text(snapshot.error.toString()));
                       }
+                      if (!snapshot.hasData) {
+                        return Center(child: Text('product not found'));
+                      }
 
-                      var data = snapshot.data ?? [];
+                      var data = snapshot.data!;
 
                       return ListView.builder(
                         itemCount: data.length,
@@ -212,7 +224,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Expanded(
-                      child: FutureBuilder<List>(
+                      child: FutureBuilder<List<ProductModel>>(
                           future: getspecific(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -257,8 +269,8 @@ class HomeScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Expanded(
-                      child: FutureBuilder<List>(
-                          future: getproduct(),
+                      child: FutureBuilder<List<ProductModel>>(
+                          future: getProducts(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {

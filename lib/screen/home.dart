@@ -2,16 +2,21 @@
 
 import 'dart:convert';
 
+import 'package:badges/badges.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
+import 'package:one_ui/one_ui.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_login/model/category.dart';
 import 'package:simple_login/model/product.dart';
+import 'package:simple_login/screen/cart.dart';
 import 'package:simple_login/screen/profile.dart';
 
+import '../procciders/cart.dart';
 import '../widgets/product.dart';
 import 'category.dart';
 
@@ -112,11 +117,26 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.shopping_bag),
-                    splashRadius: 24,
-                  )
+                  Consumer<CartProvider>(
+                    builder: (context, cartValue, child) => IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CartScreen(),
+                            ));
+                      },
+                      icon: Badge(
+                        showBadge: cartValue.products.isNotEmpty,
+                        badgeContent: Text(
+                          '${cartValue.products.length}',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        child: Icon(Icons.shopping_bag),
+                      ),
+                      splashRadius: 24,
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 20),
@@ -298,6 +318,20 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: OneUIBottomNavigationBar(
+        items: [
+          OneUIBottomNavigationBarItem(
+            // label: 'Home',
+            title: Text('HOME'),
+          ),
+          OneUIBottomNavigationBarItem(
+            // label: 'cart',
+            title: Text('cart'),
+          ),
+        ],
+        currentIndex: 0,
+        onTap: (value) {},
       ),
     );
   }

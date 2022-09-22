@@ -1,10 +1,19 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:simple_login/procciders/cart.dart';
+import 'package:simple_login/screen/detials.dart';
+import 'package:simple_login/screen/home.dart';
 import 'package:simple_login/screen/intro.dart';
 
 void main() {
-  runApp(const MovieApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider.value(value: CartProvider())],
+      child: const MovieApp(),
+    ),
+  );
 }
 
 class MovieApp extends StatefulWidget {
@@ -19,7 +28,7 @@ class _MovieAppState extends State<MovieApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: IntroScreen(),
+      home: HomeScreen(),
     );
   }
 }
